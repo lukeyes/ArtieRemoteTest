@@ -15,6 +15,10 @@ public class JoystickPanel extends JPanel implements ActionListener {
     JLabel statusLabel;
     JoystickThread mJoystickThread;
 
+    private static final int DRIVE_WALK_SPEED = 50;
+    private static final int DRIVE_RUN_SPEED = 127;
+
+
     public JoystickPanel() {
         this.setLayout(new GridLayout(2,1));
         this.add(new JLabel("XBox Controller"));
@@ -69,8 +73,12 @@ public class JoystickPanel extends JPanel implements ActionListener {
             float yRotation = xBoxController.getYRotation();
             yRotation = (Math.abs(yRotation) > 0.5) ? yRotation : 0;
 
-            byte leftByte = (byte) (yAxis * 127);
-            byte rightByte = (byte) (yRotation * 127);
+            //TODO - change max speed based on key press on controller
+            boolean isRunButtonDown = false;
+            int maxSpeed = isRunButtonDown ? DRIVE_RUN_SPEED : DRIVE_WALK_SPEED;
+
+            byte leftByte = (byte) (yAxis * maxSpeed);
+            byte rightByte = (byte) (yRotation * maxSpeed);
 
             if(Math.abs(leftByte) > 0 || Math.abs(rightByte) > 0)
                 System.out.println(

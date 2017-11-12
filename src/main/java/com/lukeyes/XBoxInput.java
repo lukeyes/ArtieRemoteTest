@@ -1,12 +1,12 @@
 package com.lukeyes;
 
-import net.java.games.input.AbstractComponent;
-import net.java.games.input.Component;
-import net.java.games.input.Controller;
-import net.java.games.input.ControllerEnvironment;
+import net.java.games.input.*;
 
 
 public class XBoxInput {
+
+    private static final String Y_AXIS_NAME = "y"; // Windows - "Y Axis"
+    private static final String Y_ROTATION_NAME = "ry"; // Windows - "Y Rotation"
 
     private void makeController(Controller c)
     {
@@ -49,11 +49,13 @@ public class XBoxInput {
 
             if( c.isAnalog() )
             {
-                if(c.getName().equalsIgnoreCase("Y Rotation"))
+                //TODO - programmatically determine correct name of controller part based on OS
+
+                if(c.getName().equalsIgnoreCase(Y_ROTATION_NAME))
                 {
                     mYRotation = c;
                 }
-                else if(c.getName().equalsIgnoreCase("Y Axis"))
+                else if(c.getName().equalsIgnoreCase(Y_AXIS_NAME))
                 {
                     mYAxis = c;
                 }
