@@ -11,7 +11,6 @@ import java.util.List;
 
 public class MotorControllerPanel extends JPanel implements ActionListener, MotorControllerListener {
 
-
     private JButton connectButton;
     private JLabel statusLabel;
 
@@ -53,6 +52,8 @@ public class MotorControllerPanel extends JPanel implements ActionListener, Moto
         this.add(controlPanel);
 
         MotorController.getInstance().setListener(this);
+
+        autoConnect();
     }
 
     @Override
@@ -106,4 +107,31 @@ public class MotorControllerPanel extends JPanel implements ActionListener, Moto
         }
         connectButton.setEnabled(comboBox.getSelectedItem() != null);
     }
+
+    private void autoConnect() {
+        Thread autoConnectRunnable = new Thread(() -> {
+            final MotorController motorController = MotorController.getInstance();
+
+            while(true) {
+
+                if(motorController.getHasArduino()) {
+                    System.out.println("Found Arduino");
+
+                    motorController.connect();
+                    return;
+                }
+
+                motorController.autoSearch();
+
+                System.out.println("Autoconnecting");
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        autoConnectRunnable.start();
+    }
+
 }

@@ -32,25 +32,52 @@ public class JoystickPanel extends JPanel implements ActionListener {
         this.add(controlPanel);
 
         xBoxController = new XBoxInput();
+
+        autoConnect();
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getActionCommand().equals("Connect")) {
-            System.out.println("Connect to XBox here");
-            boolean result = xBoxController.setup();
-            //boolean result = true;
-            if(result) {
-                connectButton.setEnabled(false);
-                statusLabel.setText("Connected");
-                statusLabel.setForeground(Color.BLACK);
-                mJoystickThread =
-                        new JoystickThread();
-                Thread t = new Thread(mJoystickThread);
-                t.start();
-            }
+            connect();
         }
     }
+
+    private boolean connect() {
+        System.out.println("Connect to XBox here");
+        boolean result = xBoxController.setup();
+        //boolean result = true;
+        if(result) {
+            connectButton.setEnabled(false);
+            statusLabel.setText("Connected");
+            statusLabel.setForeground(Color.BLACK);
+            mJoystickThread =
+                    new JoystickThread();
+            Thread t = new Thread(mJoystickThread);
+            t.start();
+        }
+        return result;
+    }
+
+    private void autoConnect() {
+        Thread autoConnectRunnable = new Thread(() -> {
+
+            while(true) {
+
+                boolean result = connect();
+                if(result) {
+                    return;
+                }
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        autoConnectRunnable.start();
+    }
+
 
     public class JoystickThread implements Runnable
     {
